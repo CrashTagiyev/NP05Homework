@@ -100,7 +100,7 @@ namespace Client
                         });
                     }
                     else
-                        Dispatcher.Invoke(() => { Cars_LV.ItemsSource = new List<Car>();});
+                        Dispatcher.Invoke(() => { Cars_LV.ItemsSource = new List<Car>(); });
 
                     break;
 
@@ -111,6 +111,7 @@ namespace Client
                     PutMethod();
                     break;
                 case HttpCommand.DELETE:
+                    DeleteMethod();
                     break;
                 default:
                     break;
@@ -149,7 +150,12 @@ namespace Client
         {
 
 
-            Command PutCommand = new Command() { HttpCommand = HttpCommand.PUT, Index = selectedCar.Id };
+            Command PutCommand = new Command()
+            {
+                HttpCommand = HttpCommand.PUT,
+                Value = new Car() { Marka = "Updated Marka by Put Method", Model = "Updated by Put Method", Year = 2012 },
+                Index = selectedCar.Id
+            };
             var SendingPutCommand = JsonConvert.SerializeObject(PutCommand);
             bw.Write(SendingPutCommand);
             var putMethodResponce = br.ReadString();
@@ -199,7 +205,9 @@ namespace Client
                 selectedCar = Cars_LV.SelectedItem as Car;
                 if (selectedCar != null)
                 {
-                    PutMethod();
+
+                    Command putCommand = new() { HttpCommand = HttpCommand.PUT };
+                    await Task.Run(() => { ClientRequest(putCommand); });
                 }
             }
             catch (Exception ex)
@@ -212,10 +220,11 @@ namespace Client
             try
             {
 
+                Command deleteCommand = new() { HttpCommand = HttpCommand.DELETE };
                 selectedCar = Cars_LV.SelectedItem as Car;
                 if (selectedCar != null)
                 {
-                    DeleteMethod();
+                    await Task.Run(() => { ClientRequest(deleteCommand); });
                 }
             }
             catch (Exception ex)

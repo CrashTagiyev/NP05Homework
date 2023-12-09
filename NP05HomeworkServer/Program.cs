@@ -43,6 +43,8 @@ while (true)
 
             case HttpCommand.PUT:
                 var PutCar = cars.FirstOrDefault(c => c.Id == command.Index);
+                PutCar.Marka = command.Value.Marka;
+                PutCar.Model=command.Value.Model;
                 var returnPutMethodResponce = JsonConvert.SerializeObject(PutCar);
                 bw.Write(returnPutMethodResponce);
                 break;
