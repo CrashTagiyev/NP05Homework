@@ -159,8 +159,6 @@ namespace Client
             var SendingPutCommand = JsonConvert.SerializeObject(PutCommand);
             bw.Write(SendingPutCommand);
             var putMethodResponce = br.ReadString();
-            var gettingSelectedCar = JsonConvert.DeserializeObject<Car>(putMethodResponce);
-            MessageBox.Show(gettingSelectedCar.Model);
         }
 
         void DeleteMethod()
@@ -190,6 +188,8 @@ namespace Client
             {
                 Command postCommand = new() { HttpCommand = HttpCommand.POST };
                 await Task.Run(() => { ClientRequest(postCommand); });
+                Thread.Sleep(1);
+                await View();
             }
             catch (Exception ex)
             {
@@ -208,6 +208,8 @@ namespace Client
 
                     Command putCommand = new() { HttpCommand = HttpCommand.PUT };
                     await Task.Run(() => { ClientRequest(putCommand); });
+                    Thread.Sleep(1);
+                    await View();
                 }
             }
             catch (Exception ex)
@@ -225,12 +227,20 @@ namespace Client
                 if (selectedCar != null)
                 {
                     await Task.Run(() => { ClientRequest(deleteCommand); });
+                    Thread.Sleep(1);
+                    await View();
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        async Task View()
+        {
+            Command getCommand = new() { HttpCommand = HttpCommand.GET };
+            await Task.Run(() => { ClientRequest(getCommand); });
         }
     }
 }
